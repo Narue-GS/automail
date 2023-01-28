@@ -1,16 +1,12 @@
 import smtplib
 import email.message
 from flask import Flask
-from flask_apscheduler import APScheduler
 
 app = Flask(__name__)
-cron = APScheduler()
-
 
 @app.route("/")
 def index():
     return "running"
-
 
 def send_email():  
     email_text = """
@@ -28,16 +24,10 @@ def send_email():
 
     s = smtplib.SMTP('smtp.gmail.com: 587')
     s.starttls()
-    # Login Credentials for sending the mail
     s.login(msg['From'], password)
     s.sendmail(msg['From'], [msg['To']], msg.as_string().encode('utf-8'))
     print('Email enviado')
 
-def cronFunc():
-    send_email()
 if __name__=="__main__":
-    cron.add_job(id="cron func", func = cronFunc, trigger="interval", seconds=3600)
-    cron.start()
     app.run(debug=True, use_reloader=False)
-
 
